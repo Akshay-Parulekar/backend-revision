@@ -12,13 +12,18 @@ import java.util.Map;
 import static com.example.backend_revision.util.MyUtil.mapper;
 
 @RestController
-@RequestMapping("/emp/")
 public class EmpController
 {
     @Autowired
     EmpRepo empRepo;
     @Autowired
     SimpMessagingTemplate ws;
+
+    @GetMapping("/emp/test/")
+    String test()
+    {
+        return "Working...";
+    }
 
     @PostMapping("/emp/")
     List<Employee> getUpdates(@RequestBody Map<String, String> payload)
@@ -27,7 +32,7 @@ public class EmpController
         return empRepo.findByTsGreaterThan(maxTsClient);
     }
 
-    @PostMapping("/save/")
+    @PostMapping("/emp/save/")
     Employee save(@RequestBody Map<String, String> payload)
     {
         System.out.println("recieved payload = " + payload.toString());
@@ -40,11 +45,12 @@ public class EmpController
         try
         {
             Employee empSaved = empRepo.save(emp);
-            ws.convertAndSend(idClient);
+            ws.convertAndSend("/topic/emp/", idClient);
             return  empSaved;
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
             return null;
         }
     }
