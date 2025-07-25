@@ -20,7 +20,7 @@ public class EmpController
     @Autowired
     SimpMessagingTemplate ws;
 
-    @GetMapping("/emp/")
+    @PostMapping("/emp/")
     List<Employee> getUpdates(@RequestBody Map<String, String> payload)
     {
         Long maxTsClient = Long.parseLong(payload.get("ts"));
@@ -33,6 +33,7 @@ public class EmpController
         System.out.println("recieved payload = " + payload.toString());
 
         String idClient = payload.get("idClient");
+        payload.remove("idClient");
         Employee emp = mapper.convertValue(payload, Employee.class);
         emp.setTs(System.nanoTime());
 
